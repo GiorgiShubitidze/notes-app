@@ -2,7 +2,7 @@ import { getNodeText } from '@testing-library/dom'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
-export function Note({ note, handleClick }) {
+export function Note({ note, handleClick, setCurrentNodeId }) {
   const history = useHistory()
   const getNote = (id) => {
     history.push(`./note/${id}`)
@@ -17,6 +17,8 @@ export function Note({ note, handleClick }) {
         >
           x
         </button>
+
+        <button onClick={() => setCurrentNodeId(note.id)}>Edit</button>
       </div>
     </li>
   )

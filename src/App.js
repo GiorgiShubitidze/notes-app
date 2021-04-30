@@ -11,6 +11,7 @@ import './App.css'
 
 export default function App() {
   const [notes, setNotes] = useState([])
+  
 
   const dispatch = useDispatch()
   const state = useSelector((state) => state.counter)
@@ -23,9 +24,27 @@ export default function App() {
       .then((data) => setNotes(data))
   }, [])
 
+  const addNote = (note) => {
+    fetch('https://jsonplaceholder.typicode.com/posts', {method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title: note, body: note})
+  })
+      .then((response) => response.json())
+      .then((data) => setNotes([data, ...notes]))
+  }
+
+
+  const updateNote = (noteId, note) => {
+    fetch(`https://jsonplaceholder.typicode.com/posts/${noteId}`, {method: 'PUT', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title: note, body: note})
+  })
+      .then((response) => response.json())
+      .then((data) => {
+        setNotes(notes.map(note => note.id === data.id ? data : note))
+      })
+  }
+
   const deleteNote = (id) => {
-    const notes = notes.filter((item) => item.id !== id)
-    setNotes(notes)
+    setNotes(notes.filter((item) => item.id !== id))
   }
 
   const decrement = () => dispatch(dec())
@@ -60,7 +79,7 @@ export default function App() {
             {/* <Route path='/notes' component={notes} /> */}
 
             <Route path='/notes'>
-              <NotesPage notes={notes} removeNote={deleteNote} />
+              <NotesPage notes={notes} removeNote={deleteNote} addNote={addNote} updateNote={updateNote} />
             </Route>
 
             <Route path='/about'>
